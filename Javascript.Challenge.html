@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Javascript Challenge</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" 
+	integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+</head>
+<body class="body" style="background: #eeeeee">
+<div class="container">
+	<div class="row">
+		<div class=" col-md-12">
+			<br/>
+			<HEADER>Javascript Challenge for Petrotechnical Data Systems</header>	
+			<br/>
+			<p>Text to be colorized</p>
+			<textarea class="form-control" id="txt" rows="5">Lights will guide you home
+And ignite your bones
+And I will try to fix you</textarea>
+			<br/>
+			<p>List of Colors</p>
+			<select multiple class="form-control" id="colorList"></select>
+			</div>
+	</div>	
+	<div class="row">
+		<div class=" col-md-6">
+			<input type="text" class="form-control col-xs-3" id="cor" placeholder="Color Name">
+			</div>
+			<div class=" col-md-6">
+			<input  class="btn btn-default" type="button" value="Add Color" onclick="AddColor()">
+		</div>
+	</div>
+	<div class="row">
+		<div class=" col-md-12">
+			<br/>
+			<input class="btn btn-default" type="button" value="Colorize Text" onclick="ColorizeText()">
+			<br/>
+			<p id="e" style="color: red;"></p>
+			<br/>
+			<p>Result</p>
+			<div style="background: white" contenteditable="true" id="ftxt"></div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+	var FormatedText = document.getElementById('ftxt');
+	var OriginalText = document.getElementById('txt');
+	var ColorText = document.getElementById('cor');
+	var ColorList = document.getElementById('colorList');
+	var AvaiableColors = new Array();
+	var lastcolor = "";
+	//List of all colors avaiable in css specification
+	var CssColors = ["AliceBlue","AntiqueWhite","Aqua","Aquamarine","Azure","Beige","Bisque","Black","BlanchedAlmond","Blue","BlueViolet","Brown","BurlyWood","CadetBlue","Chartreuse","Chocolate","Coral","CornflowerBlue","Cornsilk","Crimson","Cyan","DarkBlue","DarkCyan","DarkGoldenRod","DarkGray","DarkGrey","DarkGreen","DarkKhaki","DarkMagenta","DarkOliveGreen","Darkorange","DarkOrchid","DarkRed","DarkSalmon","DarkSeaGreen","DarkSlateBlue","DarkSlateGray","DarkSlateGrey","DarkTurquoise","DarkViolet","DeepPink","DeepSkyBlue","DimGray","DimGrey","DodgerBlue","FireBrick","FloralWhite","ForestGreen","Fuchsia","Gainsboro","GhostWhite","Gold","GoldenRod","Gray","Grey","Green","GreenYellow","HoneyDew","HotPink","IndianRed","Indigo","Ivory","Khaki","Lavender","LavenderBlush","LawnGreen","LemonChiffon","LightBlue","LightCoral","LightCyan","LightGoldenRodYellow","LightGray","LightGrey","LightGreen","LightPink","LightSalmon","LightSeaGreen","LightSkyBlue","LightSlateGray","LightSlateGrey","LightSteelBlue","LightYellow","Lime","LimeGreen","Linen","Magenta","Maroon","MediumAquaMarine","MediumBlue","MediumOrchid","MediumPurple","MediumSeaGreen","MediumSlateBlue","MediumSpringGreen","MediumTurquoise","MediumVioletRed","MidnightBlue","MintCream","MistyRose","Moccasin","NavajoWhite","Navy","OldLace","Olive","OliveDrab","Orange","OrangeRed","Orchid","PaleGoldenRod","PaleGreen","PaleTurquoise","PaleVioletRed","PapayaWhip","PeachPuff","Peru","Pink","Plum","PowderBlue","Purple","Red","RosyBrown","RoyalBlue","SaddleBrown","Salmon","SandyBrown","SeaGreen","SeaShell","Sienna","Silver","SkyBlue","SlateBlue","SlateGray","SlateGrey","Snow","SpringGreen","SteelBlue","Tan","Teal","Thistle","Tomato","Turquoise","Violet","Wheat","White","WhiteSmoke","Yellow","YellowGreen"];
+	function RefreshColorList()
+	{
+		//clear the elements
+		while(ColorList.firstChild)
+			ColorList.removeChild(ColorList.firstChild);
+
+		for(var i = 0; i < AvaiableColors.length; i++)
+		{
+			var cl = document.createElement('option');
+			cl.value = AvaiableColors[i];
+			cl.innerHTML = AvaiableColors[i];
+			ColorList.appendChild(cl);
+		}
+	}
+	function AddColor()
+	{
+		var color = ColorText.value;
+		if(CssColors.indexOf(color) == -1)
+		{
+			document.getElementById("e").innerHTML = 'The Color:' + color + " do not exist! <br/> Use one of these colors:<br/>";
+			for(var i =0; i < CssColors.length;i++)
+				document.getElementById("e").innerHTML += CssColors[i] +", "; 
+		}
+		else
+		{
+			if(AvaiableColors.indexOf(color) != -1)
+			{
+				document.getElementById("e").innerHTML = "You need to select a different color";		
+			}
+			else
+			{
+				AvaiableColors.push(color);
+				document.getElementById("e").innerHTML = "";
+				RefreshColorList();
+			}
+		}
+	}
+	function RandomizeTextColor()
+	{
+		var c = "";
+		do
+		{
+			c = AvaiableColors[Math.floor(Math.random() * AvaiableColors.length)];
+		} while(c == lastcolor);
+		lastcolor = c;
+		return c;
+	}
+	function ColorizeText()
+	{
+		if(OriginalText.value.length == 0)
+		{
+			document.getElementById("e").innerHTML = "Insert a Text to Colorize!";
+			return;	
+		} 
+		if(AvaiableColors.length < 2)
+		{
+			document.getElementById("e").innerHTML = "You need to select at least two colors to colorize the text!"; 
+			return;
+		}
+		var t = OriginalText.value;
+		FormatedText.innerHTML = "";
+		for(var i =0 ; i < t.length; i++)
+			if(t[i] !=' ')
+			{
+				if(t[i] =='\n')
+					FormatedText.innerHTML += "<br/>";
+				else
+					FormatedText.innerHTML += "<span style='color:" +RandomizeTextColor()+"'>"+t[i]+"</span>";
+			}
+				
+			else
+				FormatedText.innerHTML += " ";
+	}
+</script>
+</body>
+</html>
